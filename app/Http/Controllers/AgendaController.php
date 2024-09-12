@@ -29,7 +29,7 @@ class AgendaController extends Controller
     //D - Delete Apagar um registro na tabela
     public function destroy(Agenda $id){
         $id->delete();
-        return Redirect::route('home');
+        return Redirect::route('mostrar-home');
     }
     //CRUD
     //U- Update alterar um registro
@@ -40,6 +40,23 @@ class AgendaController extends Controller
         ]);
         $id->fill($registros);
         $id->save();
-        return Redirect::route('home');
+        return Redirect::route('mostrar-home');
+    }
+
+    public function showHome(){
+        return view('mostrar-home');
+    }
+
+    public function gerenciarAgenda(Request $request){
+        $registros = Agenda::query();
+        $registros->when($request->nome,function($query,$valor){
+            $query->where('nome','like','%'.$valor.'%');
+        });
+        $todosRegistros = $registros->get();
+        return view('gerenciaAgenda',['registrosAgenda'=>$todosRegistros]);
+    }
+
+    public function mostrarAgendaId(Agenda $id){
+        return view('alterarAgenda',['registrosAgenda'=>$id]);
     }
 }
